@@ -1,0 +1,7 @@
+**.DS_Store
+.vscode
+builds
+.sentry-native
+Games
+source.pdx
+source.pdx.zip

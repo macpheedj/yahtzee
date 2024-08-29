@@ -1,0 +1,6 @@
+name=Yahtzee
+author=Bad Cham
+description=Like that handheld thing I used to play too much as a kid
+bundleID=com.badcham.yahtzee
+version=0.0.1
+buildNumber=1
