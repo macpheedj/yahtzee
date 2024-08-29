@@ -5,6 +5,12 @@ import "CoreLibs/timer"
 
 local gfx <const> = playdate.graphics
 
+function gameStart()
+	print("hello world")
+end
+
+gameStart()
+
 function playdate.update()
 
     gfx.sprite.update()
