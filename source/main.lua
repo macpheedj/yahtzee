@@ -3,11 +3,19 @@ import "CoreLibs/graphics"
 import "CoreLibs/sprites"
 import "CoreLibs/timer"
 
+import "score"
 import "dice"
 
 DEBUG = true
 
 local gfx <const> = playdate.graphics
+
+function setupScores()
+	for i = 1, 13 do
+		local score = Score(i)
+		score:add()
+	end
+end
 
 function setupDice()
 	local dice = {}
@@ -33,6 +41,7 @@ function gameStart()
 	print("hello world")
 	math.randomseed(playdate.getSecondsSinceEpoch())
 
+	setupScores()
 	setupDice()
 end
 
