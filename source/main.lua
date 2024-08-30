@@ -18,8 +18,9 @@ function setupDice()
 	local start_position = ((48 / scale) * scale) - margin
 
 	for i = 1, 5 do
-		dice[i] = Dice()
 		local offset = ((i - 1) * width) + (i * margin)
+
+		dice[i] = Dice()
 		dice[i]:setScale(scale)
 		dice[i]:moveTo(start_position + offset, 240 - width / 2 - padding)
 		dice[i]:add()

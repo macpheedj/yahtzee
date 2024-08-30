@@ -6,9 +6,9 @@ class("Dice").extends(gfx.sprite)
 function Dice:init()
 	Dice.super.init(self)
 
+	self.value = 1
 	self.isHeld = false
 	self.isRolling = false
-	self.value = 1
 	self.images = gfx.imagetable.new("images/die")
 
 	self:setupRoller()
