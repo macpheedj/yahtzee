@@ -38,70 +38,206 @@ class("Score").extends(gfx.sprite)
 function Score:init(positionIndex)
 	self.values = {}
 	self.points = 0
-	self.numberMatching = 1 -- starts @ 1, increment for each match
 	self.isYahtzee = true -- we are yahtzee until proven otherwise
 	self.index = positionIndex
 	self.isSelected = false
 	self.images = gfx.imagetable.new("images/scores/score")
+	self.numberAppearing = {}
 
-	self:setupImage()
-	self:setupPosition()
-end
+	for i = 1, 6 do self.numberAppearing[i] = 0 end
 
-function Score:setupImage()
 	self:setImage(self.images:getImage(self.index))
-end
-
-function Score:setupPosition()
 	self:moveTo(positions[self.index].x, positions[self.index].y)
 end
 
 function Score:getDiceValues(dice)
-	print("[Score] getting dice values for score #", self.index)
+	log("[Score] getting dice values for score #", self.index)
 	self.values = {}
 
 	table.sort(dice)
 
 	for i, die in ipairs(dice) do
 		self.values[i] = die.value
+		self.numberAppearing[die.value] += 1
 
 		if i > 1 then
 			if self.values[i - 1] ~= self.values[i] then
 				self.isYahtzee = false
-			else
-				self.numberMatching += 1
 			end
 		end
 	end
 
-	print("[Score] number matching:, ", self.numberMatching)
-	print("[Score] ", self.isYahtzee and "is yahtzee btw" or "is NOT yahtzee")
 	return self.values
 end
 
-function Score:scoreTopRow()
-	print("scoring top row: ", self.index)
+function Score:getMatchCount()
+	table.sort(self.numberAppearing)
+	return self.numberAppearing[#self.numberAppearing], self.numberAppearing[#self.numberAppearing - 1]
+end
+
+function Score:sumValues()
+	local total = 0
 
 	for _, value in ipairs(self.values) do
-		print("vs value: ", value)
+		total += value
+	end
+
+	return total
+end
+
+function Score:scoreTopRow()
+	log("[Score] scoring top row: ")
+
+	for _, value in ipairs(self.values) do
 		if self.index == value then
 			self.points += value
 		end
 	end
 
-	print("score: ", self.points)
-	print("")
+	log("[Score] score: ", self.points)
+	log("")
 	return self.points
 end
 
-function Score:scoreNOfAKind(n, values)
+function Score:scoreNOfAKind(n)
+	log("[Score] scoring " .. n .. " of a kind")
+	local matchCount = self:getMatchCount()
 
+	if matchCount >= n then
+		self.points = self:sumValues()
+	else
+		self.points = 0
+	end
+
+	log("[Score] score: ", self.points)
+	log("")
+	return self.points
 end
 
+function Score:scoreFullHouse()
+	log("[Score] scoring full house")
+	local count1, count2 = self:getMatchCount()
+
+	if count1 == 3 and count2 == 2 then
+		log("[Score] full house!")
+		self.points = 25
+	else
+		self.points = 0
+	end
+
+	log("[Score] score: ", self.points)
+	log("")
+	return self.points
+end
+
+function Score:crawlNumberAppearing(start, count)
+	-- log("crawl no. appearing: start = " .. start .. ", count = " .. count)
+	local isStraight = true
+
+	for i = start, start + count do
+		-- log(i .. " = " .. self.numberAppearing[i])
+		if self.numberAppearing[i] == 0 then
+			isStraight = false
+			break
+		end
+	end
+
+	return isStraight
+end
+
+function Score:scoreSmallStraight()
+	log("[Score] scoring small straight")
+	if (
+		self:crawlNumberAppearing(1, 4) or
+		self:crawlNumberAppearing(2, 4) or
+		self:crawlNumberAppearing(3, 4)
+	) then
+		-- log("is small straight")
+		self.points = 30
+	else
+		-- log("is NOT small straight")
+		self.points = 0
+	end
+
+	log("[Score] score: ", self.points)
+	log("")
+	return self.points
+end
+
+function Score:scoreLargeStraight()
+	log("[Score] scoring large straight")
+	if (
+		self:crawlNumberAppearing(1, 5) or
+		self:crawlNumberAppearing(2, 5)
+	) then
+		-- log("is large straight")
+		self.points = 40
+	else
+		-- log("is NOT large straight")
+		self.points = 0
+	end
+
+	log("[Score] score: ", self.points)
+	log("")
+	return self.points
+end
+
+function Score:scoreChance()
+	log("[Score] scoring chance")
+	self.points = self:sumValues()
+	log("[Score] score: ", self.points)
+	log("")
+	return self.points
+end
+
+function Score:scoreYahtzee(isDryRun)
+	log("[Score] scoring yahtzee")
+	isDryRun = isDryRun or false
+
+	if self.isYahtzee then
+		if not isDryRun then
+			BONUS_ELIGIBLE = true
+		end
+		self.points = 50
+	else
+		self.points = 0
+	end
+
+	log("[Score] score: ", self.points)
+	log("")
+	return self.points
+end
+
+-- for hinting system, check if selection would result in a non-zero score
 function Score:checkEligibility(dice)
 	self:getDiceValues(dice)
 
-	if self.index <= 6 then return self:scoreTopRow() > 0 end
+	if self.index <= 6 then return self:scoreTopRow() > 0
+	elseif self.index == 7 then return self:scoreNOfAKind(3) > 0
+	elseif self.index == 8 then return self:scoreNOfAKind(4) > 0
+	elseif self.index == 9 then return self:scoreFullHouse() > 0
+	elseif self.index == 10 then return self:scoreSmallStraight() > 0
+	elseif self.index == 11 then return self:scoreLargeStraight() > 0
+	elseif self.index == 12 then return self:scoreChance() > 0
+	elseif self.index == 13 then return self:scoreYahtzee(true) > 0
+	end
+
+	-- reset points, we're just looking here
+	self.points = 0
+end
+
+function Score:select(dice)
+	self:getDiceValues(dice)
+
+	if self.index <= 6 then return self:scoreTopRow()
+	elseif self.index == 7 then return self:scoreNOfAKind(3)
+	elseif self.index == 8 then return self:scoreNOfAKind(4)
+	elseif self.index == 9 then return self:scoreFullHouse()
+	elseif self.index == 10 then return self:scoreSmallStraight()
+	elseif self.index == 11 then return self:scoreLargeStraight()
+	elseif self.index == 12 then return self:scoreChance()
+	elseif self.index == 13 then return self:scoreYahtzee()
+	end
 end
 
 return Score

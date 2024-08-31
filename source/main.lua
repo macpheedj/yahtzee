@@ -3,8 +3,8 @@ import "CoreLibs/graphics"
 import "CoreLibs/sprites"
 import "CoreLibs/timer"
 
+import "die"
 import "score"
-import "dice"
 
 DEBUG = true
 BONUS_ELIGIBLE = false
@@ -13,6 +13,12 @@ local gfx <const> = playdate.graphics
 
 dice = {}
 scores = {}
+
+function log(...)
+	if DEBUG then
+		print(...)
+	end
+end
 
 function setupScores()
 	scores = {}
@@ -35,7 +41,7 @@ function setupDice()
 	for i = 1, 5 do
 		local offset = ((i - 1) * width) + (i * margin)
 
-		dice[i] = Dice()
+		dice[i] = Die()
 		dice[i]:setScale(scale)
 		dice[i]:moveTo(start_position + offset, 240 - width / 2 - padding)
 		dice[i]:add()
@@ -53,7 +59,7 @@ function setupDice()
 end
 
 function gameStart()
-	print("hello world")
+	log("game start")
 	math.randomseed(playdate.getSecondsSinceEpoch())
 
 	setupScores()
@@ -64,17 +70,41 @@ end
 gameStart()
 
 function playdate.update()
-
 	if DEBUG then
 		if playdate.buttonJustPressed(playdate.kButtonA) then
 			for _, score in ipairs(scores) do
 				score:checkEligibility(dice)
 			end
 		end
-		-- if pd.buttonJustPressed(pd.kButtonB) then self:stopRolling() end
+
+		if playdate.buttonJustPressed(playdate.kButtonB) then
+			gameStart()
+		end
 	end
 
     gfx.sprite.update()
     playdate.timer.updateTimers()
+	playdate.drawFPS(0, 0)
+end
 
+function playdate.keyPressed(key)
+	if not DEBUG then return end
+
+	if key == "9" then
+		for _, score in ipairs(scores) do
+			score:checkEligibility(dice)
+		end
+	end
+
+	if key == "0" then
+		log(Score)
+		log(#scores)
+		log(scores[1])
+		log(scores[1]:isa(Score))
+		log("")
+		log(Die)
+		log(#dice)
+		log(dice[1])
+		log(dice[1]:isa(Dice))
+	end
 end

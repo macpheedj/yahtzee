@@ -1,10 +1,10 @@
-local pd <const> = playdate
+-- local pd <const> = playdate
 local gfx <const> = playdate.graphics
 
-class("Dice").extends(gfx.sprite)
+class("Die").extends(gfx.sprite)
 
-function Dice:init()
-	Dice.super.init(self)
+function Die:init()
+	Die.super.init(self)
 
 	self.value = 1
 	self.isHeld = false
@@ -13,9 +13,15 @@ function Dice:init()
 
 	self:setupRoller()
 	self:randomizeValue()
+	-- self:cheatValue(6)
 end
 
-function Dice:randomizeValue()
+function Die:cheatValue(value)
+	self.value = value
+	self:setImage(self.images:getImage(self.value))
+end
+
+function Die:randomizeValue()
 	local previousValue = self.value
 
 	-- no repeats
@@ -26,7 +32,7 @@ function Dice:randomizeValue()
 	self:setImage(self.images:getImage(self.value))
 end
 
-function Dice:setupRoller()
+function Die:setupRoller()
 	self.roller = playdate.timer.new(50)
 	self.roller.repeats = true
 	self.roller.timerEndedCallback = function()
@@ -36,25 +42,18 @@ function Dice:setupRoller()
 	self.roller:pause()
 end
 
-function Dice:startRolling()
+function Die:startRolling()
 	if self.isRolling or self.isHeld then return end
 
 	self.isRolling = true
 	self.roller:start()
 end
 
-function Dice:stopRolling()
+function Die:stopRolling()
 	if not self.isRolling then return end
 
 	self.isRolling = false
 	self.roller:pause()
 end
 
-function Dice:update()
-	-- if DEBUG then
-	-- 	if pd.buttonJustPressed(pd.kButtonA) then self:startRolling() end
-	-- 	if pd.buttonJustPressed(pd.kButtonB) then self:stopRolling() end
-	-- end
-end
-
-return Dice
+return Die
