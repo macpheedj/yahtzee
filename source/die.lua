@@ -13,7 +13,6 @@ function Die:init()
 
 	self:setupRoller()
 	self:randomizeValue()
-	-- self:cheatValue(6)
 end
 
 function Die:cheatValue(value)

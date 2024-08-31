@@ -47,24 +47,14 @@ function setupDice()
 		dice[i]:add()
 	end
 
-	for _, die in ipairs(dice) do
-		setmetatable(die, {
-			__lt = function(dieA, dieB)
-				return dieA.value < dieB.value
-			end
-		})
-	end
-
 	return dice
 end
 
 function gameStart()
-	log("game start")
 	math.randomseed(playdate.getSecondsSinceEpoch())
 
 	setupScores()
 	setupDice()
-
 end
 
 gameStart()
@@ -90,21 +80,30 @@ end
 function playdate.keyPressed(key)
 	if not DEBUG then return end
 
-	if key == "9" then
-		for _, score in ipairs(scores) do
-			score:checkEligibility(dice)
-		end
-	end
-
-	if key == "0" then
+	if key == "8" then
+		log("score")
 		log(Score)
 		log(#scores)
 		log(scores[1])
 		log(scores[1]:isa(Score))
-		log("")
+
+		log("die")
 		log(Die)
 		log(#dice)
 		log(dice[1])
-		log(dice[1]:isa(Dice))
+		log(dice[1].value)
+		log(dice[1]:isa(Die))
+	end
+
+	if key == "9" then
+		for _, die in ipairs(dice) do
+			die:startRolling()
+		end
+	end
+
+	if key == "0" then
+		for _, die in ipairs(dice) do
+			die:cheatValue(6)
+		end
 	end
 end

@@ -54,7 +54,9 @@ function Score:getDiceValues(dice)
 	log("[Score] getting dice values for score #", self.index)
 	self.values = {}
 
-	table.sort(dice)
+	table.sort(dice, function (a, b)
+		return a.value < b.value
+	end)
 
 	for i, die in ipairs(dice) do
 		self.values[i] = die.value
