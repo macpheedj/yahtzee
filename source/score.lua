@@ -6,31 +6,31 @@ local margin = 4
 local padding = margin * 2
 local scoreSize = 48
 local scoreSizeHalf = scoreSize / 2
-local screenWidth, screenHeight = 400, 240
+local screenWidth = 400
 
 local positions = {
 	-- TOP ROW LEFT
-	{ x = padding + scoreSizeHalf,                                            y = padding + scoreSizeHalf },
-	{ x = padding + scoreSizeHalf + margin + scoreSize,                       y = padding + scoreSizeHalf },
-	{ x = padding + scoreSizeHalf + margin * 2 + scoreSize * 2,               y = padding + scoreSizeHalf },
+	{ x = padding + scoreSizeHalf,                                            y = padding * 1.5 + scoreSizeHalf },
+	{ x = padding + scoreSizeHalf + margin + scoreSize,                       y = padding * 1.5 + scoreSizeHalf },
+	{ x = padding + scoreSizeHalf + margin * 2 + scoreSize * 2,               y = padding * 1.5 + scoreSizeHalf },
 
 	-- TOP ROW RIGHT
-	{ x = screenWidth - padding - scoreSizeHalf - margin * 2 - scoreSize * 2, y = padding + scoreSizeHalf },
-	{ x = screenWidth - padding - scoreSizeHalf - margin - scoreSize,         y = padding + scoreSizeHalf },
-	{ x = screenWidth - padding - scoreSizeHalf,                              y = padding + scoreSizeHalf },
+	{ x = screenWidth - padding - scoreSizeHalf - margin * 2 - scoreSize * 2, y = padding * 1.5 + scoreSizeHalf },
+	{ x = screenWidth - padding - scoreSizeHalf - margin - scoreSize,         y = padding * 1.5 + scoreSizeHalf },
+	{ x = screenWidth - padding - scoreSizeHalf,                              y = padding * 1.5 + scoreSizeHalf },
 
 	-- BOTTOM ROW LEFT
-	{ x = padding + scoreSizeHalf,                                            y = padding + scoreSizeHalf + margin + scoreSize },
-	{ x = padding + scoreSizeHalf + margin + scoreSize,                       y = padding + scoreSizeHalf + margin + scoreSize },
-	{ x = padding + scoreSizeHalf + margin * 2 + scoreSize * 2,               y = padding + scoreSizeHalf + margin + scoreSize },
+	{ x = padding + scoreSizeHalf,                                            y = padding * 1.5 + scoreSizeHalf + margin + scoreSize },
+	{ x = padding + scoreSizeHalf + margin + scoreSize,                       y = padding * 1.5 + scoreSizeHalf + margin + scoreSize },
+	{ x = padding + scoreSizeHalf + margin * 2 + scoreSize * 2,               y = padding * 1.5 + scoreSizeHalf + margin + scoreSize },
 
 	-- BOTTOM ROW RIGHT
-	{ x = screenWidth - padding - scoreSizeHalf - margin * 2 - scoreSize * 2, y = padding + scoreSizeHalf + margin + scoreSize },
-	{ x = screenWidth - padding - scoreSizeHalf - margin - scoreSize,         y = padding + scoreSizeHalf + margin + scoreSize },
-	{ x = screenWidth - padding - scoreSizeHalf,                              y = padding + scoreSizeHalf + margin + scoreSize },
+	{ x = screenWidth - padding - scoreSizeHalf - margin * 2 - scoreSize * 2, y = padding * 1.5 + scoreSizeHalf + margin + scoreSize },
+	{ x = screenWidth - padding - scoreSizeHalf - margin - scoreSize,         y = padding * 1.5 + scoreSizeHalf + margin + scoreSize },
+	{ x = screenWidth - padding - scoreSizeHalf,                              y = padding * 1.5 + scoreSizeHalf + margin + scoreSize },
 
 	-- YAHTZEE
-	{ x = 200,                                                                y = padding + scoreSizeHalf + margin + scoreSize }
+	{ x = 200,                                                                y = padding * 1.5 + scoreSizeHalf + margin + scoreSize }
 }
 
 class("Score").extends(gfx.sprite)
