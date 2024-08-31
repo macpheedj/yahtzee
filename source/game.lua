@@ -72,9 +72,8 @@ function Game:setupDice()
 	for i = 1, 5 do
 		local offset = ((i - 1) * width) + (i * margin)
 
-		self.dice[i] = Die()
+		self.dice[i] = Die(start_position + offset, 240 - width / 2 - padding)
 		self.dice[i]:setScale(scale)
-		self.dice[i]:moveTo(start_position + offset, 240 - width / 2 - padding)
 		self.dice[i]:add()
 	end
 
@@ -82,7 +81,7 @@ function Game:setupDice()
 end
 
 function Game:setupSelection()
-	self.selectionRow = 1
+	self.selectionRow = 3
 	self.selectionIndex = 1
 	self.selectionIndices = {
 		{ 1, 2, 3, 4,  5,  6 },
@@ -235,7 +234,7 @@ function Game:rollDice()
 	self:setState(self.states.ROLLING)
 
 	for _, die in ipairs(self.dice) do
-		if not die.isHeld then
+		if not die.isLocked then
 			die:startRolling()
 		end
 	end
@@ -296,9 +295,25 @@ function Game:handleSelectionInput()
 	end
 end
 
+function Game:handleSelectionConfirmation()
+	local index = self.selectionIndices[self.selectionRow][self.selectionIndex]
+
+	if self.selectionRow < 3 then
+		self.scores[index]:confirmSelection()
+	else
+		self.dice[index]:confirmSelection()
+	end
+end
+
 function Game:update()
-	if pd.buttonJustPressed(pd.kButtonA) then self:rollDice() end
-	if pd.buttonJustPressed(pd.kButtonB) then self:stopRolling() end
+	-- if pd.buttonJustPressed(pd.kButtonA) then self:rollDice() end
+	-- if pd.buttonJustPressed(pd.kButtonB) then self:stopRolling() end
+
+	if self.state == self.states.ROLLING then
+		if pd.buttonJustPressed(pd.kButtonA) or pd.buttonJustPressed(pd.kButtonB) then
+			self:stopRolling()
+		end
+	end
 
 	if self.state == self.states.SELECTING then
 		if (
@@ -308,6 +323,10 @@ function Game:update()
 			pd.buttonJustPressed(pd.kButtonRight)
 		) then
 			self:handleSelectionInput()
+		end
+
+		if pd.buttonJustPressed(pd.kButtonA) or pd.buttonJustPressed(pd.kButtonB) then
+			self:handleSelectionConfirmation()
 		end
 	end
 end

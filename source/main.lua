@@ -4,6 +4,7 @@ import "CoreLibs/sprites"
 import "CoreLibs/timer"
 
 import "game"
+import "lock"
 import "die"
 import "score"
 

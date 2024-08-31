@@ -3,23 +3,33 @@ local gfx <const> = playdate.graphics
 
 class("Die").extends(gfx.sprite)
 
-function Die:init()
+function Die:init(posX, posY)
 	Die.super.init(self)
 
 	self.value = 1
-	self.isHeld = false
+	self.isLocked = false
 	self.isRolling = false
 	self.isSelected = false
 	self.images = gfx.imagetable.new("images/die")
 
 	self:setupRoller()
 	self:randomizeValue()
+	self:moveTo(posX, posY)
+
+	self.lock = Lock(self.isLocked)
+	self.lock:moveTo(posX, posY - self.height - 4)
+	self.lock:add()
 end
 
 function Die:setSelected(isSelected)
-	log("[Die] setting selected", self.value, isSelected and "Y" or "N")
+	-- log("[Die] setting selected", self.value, isSelected and "Y" or "N")
 	self.isSelected = isSelected
 	self:setImageDrawMode(isSelected and gfx.kDrawModeInverted or gfx.kDrawModeCopy)
+end
+
+function Die:confirmSelection()
+	self.isLocked = not self.isLocked
+	self.lock:setLocked(self.isLocked)
 end
 
 function Die:cheatValue(value)
@@ -49,7 +59,7 @@ function Die:setupRoller()
 end
 
 function Die:startRolling()
-	if self.isRolling or self.isHeld then return end
+	if self.isRolling or self.isLocked then return end
 
 	self.isRolling = true
 	self.roller:start()
