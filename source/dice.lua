@@ -51,10 +51,10 @@ function Dice:stopRolling()
 end
 
 function Dice:update()
-	if DEBUG then
-		if pd.buttonJustPressed(pd.kButtonA) then self:startRolling() end
-		if pd.buttonJustPressed(pd.kButtonB) then self:stopRolling() end
-	end
+	-- if DEBUG then
+	-- 	if pd.buttonJustPressed(pd.kButtonA) then self:startRolling() end
+	-- 	if pd.buttonJustPressed(pd.kButtonB) then self:stopRolling() end
+	-- end
 end
 
 return Dice

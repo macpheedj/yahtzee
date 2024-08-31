@@ -10,15 +10,21 @@ DEBUG = true
 
 local gfx <const> = playdate.graphics
 
+dice = {}
+scores = {}
+
 function setupScores()
+	scores = {}
+
 	for i = 1, 13 do
-		local score = Score(i)
-		score:add()
+		scores[i] = Score(i)
+		scores[i]:add()
 	end
 end
 
 function setupDice()
-	local dice = {}
+	dice = {}
+
 	local scale = 1.5
 	local width = 48 * scale
 	local margin = 4
@@ -43,11 +49,21 @@ function gameStart()
 
 	setupScores()
 	setupDice()
+
 end
 
 gameStart()
 
 function playdate.update()
+
+	if DEBUG then
+		if playdate.buttonJustPressed(playdate.kButtonA) then
+			for _, score in ipairs(scores) do
+				score:checkEligibility(dice)
+			end
+		end
+		-- if pd.buttonJustPressed(pd.kButtonB) then self:stopRolling() end
+	end
 
     gfx.sprite.update()
     playdate.timer.updateTimers()
