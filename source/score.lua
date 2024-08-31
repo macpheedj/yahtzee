@@ -64,11 +64,14 @@ function Score:getDiceValues(dice)
 	log("[Score] getting dice values for score #", self.index)
 	self.values = {}
 
-	table.sort(dice, function (a, b)
+	local diceCopy = {}
+	table.move(dice, 1, #dice, 1, diceCopy)
+
+	table.sort(diceCopy, function (a, b)
 		return a.value < b.value
 	end)
 
-	for i, die in ipairs(dice) do
+	for i, die in ipairs(diceCopy) do
 		self.values[i] = die.value
 		self.numberAppearing[die.value] += 1
 
