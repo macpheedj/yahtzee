@@ -50,6 +50,11 @@ function Score:init(positionIndex)
 	self:moveTo(positions[self.index].x, positions[self.index].y)
 end
 
+function Score:setSelected(isSelected)
+	log("[Score] setting selected", self.index, isSelected and "Y" or "N")
+	self.isSelected = isSelected
+end
+
 function Score:getDiceValues(dice)
 	log("[Score] getting dice values for score #", self.index)
 	self.values = {}

@@ -9,10 +9,16 @@ function Die:init()
 	self.value = 1
 	self.isHeld = false
 	self.isRolling = false
+	self.isSelected = false
 	self.images = gfx.imagetable.new("images/die")
 
 	self:setupRoller()
 	self:randomizeValue()
+end
+
+function Die:setSelected(isSelected)
+	log("[Die] setting selected", self.value, isSelected and "Y" or "N")
+	self.isSelected = isSelected
 end
 
 function Die:cheatValue(value)

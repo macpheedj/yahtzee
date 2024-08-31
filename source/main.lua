@@ -17,6 +17,10 @@ function log(...)
 	end
 end
 
+function loop(index, length)
+	return index < 1 and length or index > length and 1 or index
+end
+
 function gameStart()
 	math.randomseed(playdate.getSecondsSinceEpoch())
 
