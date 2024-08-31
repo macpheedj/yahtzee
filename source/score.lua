@@ -38,6 +38,7 @@ class("Score").extends(gfx.sprite)
 function Score:init(positionIndex)
 	self.values = {}
 	self.points = 0
+	self.numberMatching = 1 -- starts @ 1, increment for each match
 	self.isYahtzee = true -- we are yahtzee until proven otherwise
 	self.index = positionIndex
 	self.isSelected = false
@@ -59,16 +60,21 @@ function Score:getDiceValues(dice)
 	print("[Score] getting dice values for score #", self.index)
 	self.values = {}
 
+	table.sort(dice)
+
 	for i, die in ipairs(dice) do
 		self.values[i] = die.value
 
 		if i > 1 then
 			if self.values[i - 1] ~= self.values[i] then
 				self.isYahtzee = false
+			else
+				self.numberMatching += 1
 			end
 		end
 	end
 
+	print("[Score] number matching:, ", self.numberMatching)
 	print("[Score] ", self.isYahtzee and "is yahtzee btw" or "is NOT yahtzee")
 	return self.values
 end
@@ -89,7 +95,7 @@ function Score:scoreTopRow()
 end
 
 function Score:scoreNOfAKind(n, values)
-	
+
 end
 
 function Score:checkEligibility(dice)

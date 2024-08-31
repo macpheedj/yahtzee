@@ -7,6 +7,7 @@ import "score"
 import "dice"
 
 DEBUG = true
+BONUS_ELIGIBLE = false
 
 local gfx <const> = playdate.graphics
 
@@ -38,6 +39,14 @@ function setupDice()
 		dice[i]:setScale(scale)
 		dice[i]:moveTo(start_position + offset, 240 - width / 2 - padding)
 		dice[i]:add()
+	end
+
+	for _, die in ipairs(dice) do
+		setmetatable(die, {
+			__lt = function(dieA, dieB)
+				return dieA.value < dieB.value
+			end
+		})
 	end
 
 	return dice
