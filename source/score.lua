@@ -36,7 +36,9 @@ local positions = {
 class("Score").extends(gfx.sprite)
 
 function Score:init(positionIndex)
+	self.values = {}
 	self.points = 0
+	self.isYahtzee = true -- we are yahtzee until proven otherwise
 	self.index = positionIndex
 	self.isSelected = false
 	self.images = gfx.imagetable.new("images/scores/score")
@@ -54,20 +56,27 @@ function Score:setupPosition()
 end
 
 function Score:getDiceValues(dice)
-	local values = {}
+	print("[Score] getting dice values for score #", self.index)
+	self.values = {}
 
 	for i, die in ipairs(dice) do
-		-- print("value: ", die.value)
-		values[i] = die.value
+		self.values[i] = die.value
+
+		if i > 1 then
+			if self.values[i - 1] ~= self.values[i] then
+				self.isYahtzee = false
+			end
+		end
 	end
 
-	return values
+	print("[Score] ", self.isYahtzee and "is yahtzee btw" or "is NOT yahtzee")
+	return self.values
 end
 
-function Score:scoreTopRow(values)
+function Score:scoreTopRow()
 	print("scoring top row: ", self.index)
 
-	for _, value in ipairs(values) do
+	for _, value in ipairs(self.values) do
 		print("vs value: ", value)
 		if self.index == value then
 			self.points += value
@@ -79,10 +88,14 @@ function Score:scoreTopRow(values)
 	return self.points
 end
 
-function Score:checkEligibility(dice)
-	local values = self:getDiceValues(dice)
+function Score:scoreNOfAKind(n, values)
+	
+end
 
-	if self.index <= 6 then return self:scoreTopRow(values) > 0 end
+function Score:checkEligibility(dice)
+	self:getDiceValues(dice)
+
+	if self.index <= 6 then return self:scoreTopRow() > 0 end
 end
 
 return Score
