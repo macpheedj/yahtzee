@@ -33,6 +33,25 @@ local positions = {
 	{ x = 200,                                                                y = padding + scoreSizeHalf + margin + scoreSize }
 }
 
+-- local positions = {
+-- 	-- TOP ROW
+-- 	{ x = padding + scoreSizeHalf,                              y = padding + scoreSizeHalf },
+-- 	{ x = padding + scoreSizeHalf + margin + scoreSize,         y = padding + scoreSizeHalf },
+-- 	{ x = padding + scoreSizeHalf + margin * 2 + scoreSize * 2, y = padding + scoreSizeHalf },
+-- 	{ x = padding + scoreSizeHalf + margin * 3 + scoreSize * 3, y = padding + scoreSizeHalf },
+-- 	{ x = padding + scoreSizeHalf + margin * 4 + scoreSize * 4, y = padding + scoreSizeHalf },
+-- 	{ x = padding + scoreSizeHalf + margin * 5 + scoreSize * 5, y = padding + scoreSizeHalf },
+
+-- 	-- BOTTOM ROW
+-- 	{ x = padding + scoreSizeHalf,                              y = padding + scoreSizeHalf + margin + scoreSize },
+-- 	{ x = padding + scoreSizeHalf + margin + scoreSize,         y = padding + scoreSizeHalf + margin + scoreSize },
+-- 	{ x = padding + scoreSizeHalf + margin * 2 + scoreSize * 2, y = padding + scoreSizeHalf + margin + scoreSize },
+-- 	{ x = padding + scoreSizeHalf + margin * 3 + scoreSize * 3, y = padding + scoreSizeHalf + margin + scoreSize },
+-- 	{ x = padding + scoreSizeHalf + margin * 4 + scoreSize * 4, y = padding + scoreSizeHalf + margin + scoreSize },
+-- 	{ x = padding + scoreSizeHalf + margin * 5 + scoreSize * 5, y = padding + scoreSizeHalf + margin + scoreSize },
+-- 	{ x = padding + scoreSizeHalf + margin * 6 + scoreSize * 6.25, y = padding + scoreSizeHalf + margin + scoreSize }
+-- }
+
 class("Score").extends(gfx.sprite)
 
 function Score:init(positionIndex)
@@ -53,6 +72,7 @@ end
 function Score:setSelected(isSelected)
 	log("[Score] setting selected", self.index, isSelected and "Y" or "N")
 	self.isSelected = isSelected
+	self:setImageDrawMode(isSelected and gfx.kDrawModeInverted or gfx.kDrawModeCopy)
 end
 
 function Score:getDiceValues(dice)

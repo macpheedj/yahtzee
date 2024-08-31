@@ -24,13 +24,14 @@ function Game:init()
 end
 
 function Game:setState(state)
-	log("[Game] setting state", state)
 	assert(self.states[state], "[Game] invalid state: " .. state)
+	log("[Game] setting state", state)
+
 	self.state = state
+	self:deselectAll()
 
 	if self.state == self.states.SELECTING then
-		self:deselectAll()
-		self.dice[1]:setSelected(true)
+		self.scores[1]:setSelected(true)
 	end
 end
 
@@ -81,12 +82,151 @@ function Game:setupDice()
 end
 
 function Game:setupSelection()
-	self.selectionRow = 3
+	self.selectionRow = 1
 	self.selectionIndex = 1
 	self.selectionIndices = {
 		{ 1, 2, 3, 4,  5,  6 },
 		{ 7, 8, 9, 13, 10, 11, 12 },
 		{ 1, 2, 3, 4,  5 },
+	}
+	self.selectionInstructions = {
+		-- TOP ROW
+		{
+			-- ACES
+			{
+				[pd.kButtonUp] = { row = 3, index = 1 },
+				[pd.kButtonDown] = { row = 2, index = 1 },
+				[pd.kButtonLeft] = { row = 1, index = 6 },
+				[pd.kButtonRight] = { row = 1, index = 2 },
+			},
+			-- TWOS
+			{
+				[pd.kButtonUp] = { row = 3, index = 2 },
+				[pd.kButtonDown] = { row = 2, index = 2 },
+				[pd.kButtonLeft] = { row = 1, index = 1 },
+				[pd.kButtonRight] = { row = 1, index = 3 },
+			},
+			-- THREES
+			{
+				[pd.kButtonUp] = { row = 3, index = 3 },
+				[pd.kButtonDown] = { row = 2, index = 3 },
+				[pd.kButtonLeft] = { row = 1, index = 2 },
+				[pd.kButtonRight] = { row = 1, index = 4 },
+			},
+			-- FOURS
+			{
+				[pd.kButtonUp] = { row = 3, index = 3 },
+				[pd.kButtonDown] = { row = 2, index = 5 },
+				[pd.kButtonLeft] = { row = 1, index = 3 },
+				[pd.kButtonRight] = { row = 1, index = 5 },
+			},
+			-- FIVES
+			{
+				[pd.kButtonUp] = { row = 3, index = 4 },
+				[pd.kButtonDown] = { row = 2, index = 6 },
+				[pd.kButtonLeft] = { row = 1, index = 4 },
+				[pd.kButtonRight] = { row = 1, index = 6 },
+			},
+			-- SIXES
+			{
+				[pd.kButtonUp] = { row = 3, index = 5 },
+				[pd.kButtonDown] = { row = 2, index = 7 },
+				[pd.kButtonLeft] = { row = 1, index = 5 },
+				[pd.kButtonRight] = { row = 1, index = 1 },
+			},
+		},
+
+		-- MIDDLE ROW
+		{
+			-- 3 OF A KIND
+			{
+				[pd.kButtonUp] = { row = 1, index = 1 },
+				[pd.kButtonDown] = { row = 3, index = 1 },
+				[pd.kButtonLeft] = { row = 2, index = 7 },
+				[pd.kButtonRight] = { row = 2, index = 2 },
+			},
+			-- 4 OF A KIND
+			{
+				[pd.kButtonUp] = { row = 1, index = 2 },
+				[pd.kButtonDown] = { row = 3, index = 2 },
+				[pd.kButtonLeft] = { row = 2, index = 1 },
+				[pd.kButtonRight] = { row = 2, index = 3 },
+			},
+			-- FULL HOUSE
+			{
+				[pd.kButtonUp] = { row = 1, index = 3 },
+				[pd.kButtonDown] = { row = 3, index = 3 },
+				[pd.kButtonLeft] = { row = 2, index = 2 },
+				[pd.kButtonRight] = { row = 2, index = 4 },
+			},
+			-- YAHTZEE
+			{
+				[pd.kButtonUp] = { row = 1, index = 3 },
+				[pd.kButtonDown] = { row = 3, index = 3 },
+				[pd.kButtonLeft] = { row = 2, index = 3 },
+				[pd.kButtonRight] = { row = 2, index = 5 },
+			},
+			-- SMALL STRAIGHT
+			{
+				[pd.kButtonUp] = { row = 1, index = 4 },
+				[pd.kButtonDown] = { row = 3, index = 3 },
+				[pd.kButtonLeft] = { row = 2, index = 4 },
+				[pd.kButtonRight] = { row = 2, index = 6 },
+			},
+			-- LARGE STRAIGHT
+			{
+				[pd.kButtonUp] = { row = 1, index = 5 },
+				[pd.kButtonDown] = { row = 3, index = 4 },
+				[pd.kButtonLeft] = { row = 2, index = 5 },
+				[pd.kButtonRight] = { row = 2, index = 7 },
+			},
+			-- CHANCE
+			{
+				[pd.kButtonUp] = { row = 1, index = 6 },
+				[pd.kButtonDown] = { row = 3, index = 5 },
+				[pd.kButtonLeft] = { row = 2, index = 6 },
+				[pd.kButtonRight] = { row = 2, index = 1 },
+			},
+		},
+
+		-- BOTTOM ROW
+		{
+			-- FIRST
+			{
+				[pd.kButtonUp] = { row = 2, index = 1 },
+				[pd.kButtonDown] = { row = 1, index = 1 },
+				[pd.kButtonLeft] = { row = 3, index = 5 },
+				[pd.kButtonRight] = { row = 3, index = 2 },
+			},
+			-- SECOND
+			{
+				[pd.kButtonUp] = { row = 2, index = 2 },
+				[pd.kButtonDown] = { row = 1, index = 2 },
+				[pd.kButtonLeft] = { row = 3, index = 1 },
+				[pd.kButtonRight] = { row = 3, index = 3 },
+			},
+			-- THIRD
+			{
+				[pd.kButtonUp] = { row = 2, index = 4 },
+				[pd.kButtonDown] = { row = 1, index = 3 },
+				[pd.kButtonLeft] = { row = 3, index = 2 },
+				[pd.kButtonRight] = { row = 3, index = 4 },
+			},
+			-- FOURTH
+			{
+				[pd.kButtonUp] = { row = 2, index = 6 },
+				[pd.kButtonDown] = { row = 1, index = 5 },
+				[pd.kButtonLeft] = { row = 3, index = 3 },
+				[pd.kButtonRight] = { row = 3, index = 5 },
+			},
+			-- FIFTH
+			{
+				[pd.kButtonUp] = { row = 2, index = 7 },
+				[pd.kButtonDown] = { row = 1, index = 6 },
+				[pd.kButtonLeft] = { row = 3, index = 4 },
+				[pd.kButtonRight] = { row = 3, index = 1 },
+			},
+		},
 	}
 end
 
@@ -138,25 +278,14 @@ end
 function Game:handleSelectionInput()
 	self:deselectAll()
 
-	if pd.buttonJustPressed(pd.kButtonUp) then
-		self.selectionRow = loop(self.selectionRow -1, #self.selectionIndices)
-	end
+	local instructions = self.selectionInstructions[self.selectionRow][self.selectionIndex]
+	local input = pd.buttonJustPressed(pd.kButtonUp) and pd.kButtonUp or
+		pd.buttonJustPressed(pd.kButtonDown) and pd.kButtonDown or
+		pd.buttonJustPressed(pd.kButtonLeft) and pd.kButtonLeft or
+		pd.buttonJustPressed(pd.kButtonRight) and pd.kButtonRight
 
-	if pd.buttonJustPressed(pd.kButtonDown) then
-		self.selectionRow = loop(self.selectionRow + 1, #self.selectionIndices)
-	end
-
-	if pd.buttonJustPressed(pd.kButtonLeft) then
-		self.selectionIndex = loop(self.selectionIndex - 1, #self.selectionIndices[self.selectionRow])
-	end
-
-	if pd.buttonJustPressed(pd.kButtonRight) then
-		self.selectionIndex = loop(self.selectionIndex + 1, #self.selectionIndices[self.selectionRow])
-	end
-
-	if self.selectionIndex > #self.selectionIndices[self.selectionRow] then
-		self.selectionIndex = #self.selectionIndices[self.selectionRow]
-	end
+	self.selectionRow = instructions[input].row
+	self.selectionIndex = instructions[input].index
 
 	local index = self.selectionIndices[self.selectionRow][self.selectionIndex]
 

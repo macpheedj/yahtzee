@@ -19,6 +19,7 @@ end
 function Die:setSelected(isSelected)
 	log("[Die] setting selected", self.value, isSelected and "Y" or "N")
 	self.isSelected = isSelected
+	self:setImageDrawMode(isSelected and gfx.kDrawModeInverted or gfx.kDrawModeCopy)
 end
 
 function Die:cheatValue(value)
