@@ -11,6 +11,7 @@ function Game:init()
 	self.dice = {}
 	self.scores = {}
 	self.roll = 1
+	self.round = 1
 	self.crankChange = 0
 
 	self.states = {
@@ -44,6 +45,13 @@ function Game:reset()
 
 	self.dice = {}
 	self.scores = {}
+	self.roll = 1
+	self.round = 1
+	self.crankChange = 0
+	self.state = self.states.STANDBY
+
+	self.scoreboard = Scoreboard()
+	self.scoreboard:displayRoll(self.roll)
 
 	self:setupDice()
 	self:setupScores()
@@ -246,6 +254,7 @@ function Game:stopNextDie(index)
 	log("[Game] stopping die", index)
 	if index > #self.dice then
 		pd.timer.performAfterDelay(200, function()
+			self.roll += 1
 			self:setState(self.states.SELECTING)
 		end)
 	else
@@ -264,11 +273,9 @@ end
 
 function Game:stopRolling()
 	log("[Game] stop rolling")
+	self.selectionRow = 3
+	self.selectionIndex = 1
 	self:stopNextDie(1)
-end
-
-function Game:start()
-	
 end
 
 function Game:deselectAll()
@@ -292,8 +299,14 @@ function Game:handleSelectionInput()
 
 	if self.selectionRow < 3 then
 		self.scores[index]:setSelected(true)
+
+		if not self.scores[index].isDisabled then
+			local previewValue = self.scores[index]:getScoreValue(self.dice)
+			self.scoreboard:previewScore(previewValue)
+		end
 	else
 		self.dice[index]:setSelected(true)
+		self.scoreboard:displayRoll(self.roll)
 	end
 end
 
@@ -301,7 +314,11 @@ function Game:handleSelectionConfirmation()
 	local index = self.selectionIndices[self.selectionRow][self.selectionIndex]
 
 	if self.selectionRow < 3 then
-		self.scores[index]:confirmSelection()
+		if not self.scores[index].isDisabled then
+			self.scores[index]:getScoreValue()
+			self.scores[index]:confirmSelection()
+			self.scoreboard:displayScore()
+		end
 	else
 		self.dice[index]:confirmSelection()
 	end
@@ -329,7 +346,7 @@ function Game:update()
 		end
 	end
 
-	if self.state ~= self.states.ROLLING then
+	if self.state ~= self.states.ROLLING and self.roll <= 3 then
 		local change = pd.getCrankChange()
 		self.crankChange += change
 

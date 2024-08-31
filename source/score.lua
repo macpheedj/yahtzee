@@ -1,6 +1,4 @@
--- local pd <const> = playdate
 local gfx <const> = playdate.graphics
--- local font = gfx.font.new('fonts/Razzle')
 
 local margin = 4
 local padding = margin * 2
@@ -43,6 +41,7 @@ function Score:init(positionIndex)
 	self.isSelected = false
 	self.images = gfx.imagetable.new("images/scores/score")
 	self.numberAppearing = {}
+	self.isDisabled = false
 
 	for i = 1, 6 do self.numberAppearing[i] = 0 end
 
@@ -57,7 +56,8 @@ function Score:setSelected(isSelected)
 end
 
 function Score:confirmSelection()
-	
+	self.isDisabled = true
+	SCORE += self.value
 end
 
 function Score:getDiceValues(dice)
@@ -202,14 +202,11 @@ function Score:scoreChance()
 	return self.points
 end
 
-function Score:scoreYahtzee(isDryRun)
+function Score:scoreYahtzee()
 	log("[Score] scoring yahtzee")
 	isDryRun = isDryRun or false
 
 	if self.isYahtzee then
-		if not isDryRun then
-			BONUS_ELIGIBLE = true
-		end
 		self.points = 50
 	else
 		self.points = 0
@@ -231,15 +228,19 @@ function Score:checkEligibility(dice)
 	elseif self.index == 10 then return self:scoreSmallStraight() > 0
 	elseif self.index == 11 then return self:scoreLargeStraight() > 0
 	elseif self.index == 12 then return self:scoreChance() > 0
-	elseif self.index == 13 then return self:scoreYahtzee(true) > 0
+	elseif self.index == 13 then return self:scoreYahtzee() > 0
 	end
 
 	-- reset points, we're just looking here
 	self.points = 0
 end
 
-function Score:select(dice)
+function Score:getScoreValue(dice)
 	self:getDiceValues(dice)
+
+	if self.points > 0 then
+		return self.points
+	end
 
 	if self.index <= 6 then return self:scoreTopRow()
 	elseif self.index == 7 then return self:scoreNOfAKind(3)

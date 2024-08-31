@@ -7,6 +7,7 @@ import "game"
 import "lock"
 import "die"
 import "score"
+import "scoreboard"
 
 DEBUG = true
 
