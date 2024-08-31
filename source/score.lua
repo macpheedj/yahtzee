@@ -57,19 +57,22 @@ end
 
 function Score:confirmSelection()
 	self.isDisabled = true
-	SCORE += self.value
+	SCORE += self.points
 end
 
 function Score:getDiceValues(dice)
 	log("[Score] getting dice values for score #", self.index)
 	self.values = {}
 
+	-- sort a copy of the dice to maintain proper input order
 	local diceCopy = {}
 	table.move(dice, 1, #dice, 1, diceCopy)
-
 	table.sort(diceCopy, function (a, b)
 		return a.value < b.value
 	end)
+
+	-- reset numberAppearing
+	for i = 1, 6 do self.numberAppearing[i] = 0 end
 
 	for i, die in ipairs(diceCopy) do
 		self.values[i] = die.value

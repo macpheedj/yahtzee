@@ -20,7 +20,7 @@ function Scoreboard:displayScore()
 end
 
 function Scoreboard:previewScore(points)
-	local text = "*Score\n" .. SCORE .. " + " .. points .. "*"
+	local text = "*Score\n" .. "+" .. points .. "*"
 	local image = gfx.imageWithText(text, 72, 48, nil, nil, nil, kTextAlignment.center)
 	self:setImage(image)
 end
