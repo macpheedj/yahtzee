@@ -14,9 +14,10 @@ function Game:init()
 	self.crankChange = 0
 
 	self.states = {
-		STANDBY= "STANDBY",
+		STANDBY = "STANDBY",
 		ROLLING = "ROLLING",
 		SELECTING = "SELECTING",
+		GAMEOVER = "GAMEOVER",
 	}
 	self.state = self.states.STANDBY
 
@@ -33,6 +34,8 @@ function Game:setState(state)
 
 	if self.state == self.states.STANDBY then
 		self.scoreboard:startToggling()
+	else
+		self.scoreboard:stopToggling()
 	end
 
 	if self.state == self.states.ROLLING then
@@ -41,6 +44,10 @@ function Game:setState(state)
 
 	if self.state == self.states.SELECTING then
 		self.dice[1]:setSelected(true)
+	end
+
+	if self.state == self.states.GAMEOVER then
+		self.scoreboard:displayFinal()
 	end
 end
 
@@ -259,7 +266,17 @@ end
 
 function Game:startNewRound()
 	self:setState(self.states.STANDBY)
+	self.round += 1
 	ROLL = 0
+
+	for _, die in ipairs(self.dice) do
+		die.isLocked = false
+		die.lock:setLocked(false)
+	end
+
+	if self.round > 13 then
+		self:setState(self.states.GAMEOVER)
+	end
 end
 
 function Game:stopNextDie(index)
@@ -316,6 +333,8 @@ function Game:handleSelectionInput()
 		if not self.scores[index].isDisabled then
 			local previewValue = self.scores[index]:getScoreValue(self.dice)
 			self.scoreboard:previewScore(previewValue)
+		else
+			self.scoreboard:displayScore()
 		end
 	else
 		self.dice[index]:setSelected(true)
@@ -328,6 +347,7 @@ function Game:handleSelectionConfirmation()
 
 	if self.selectionRow < 3 then
 		if not self.scores[index].isDisabled then
+			log("this one was not disabled")
 			self.scores[index]:getScoreValue(self.dice)
 			self.scores[index]:confirmSelection()
 			self.scoreboard:displayScore()

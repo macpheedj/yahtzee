@@ -58,6 +58,10 @@ end
 function Score:confirmSelection()
 	self.isDisabled = true
 	SCORE += self.points
+
+	local image = self.images:getImage(self.index)
+	image = image:fadedImage(0.5, gfx.image.kDitherTypeDiagonalLine)
+	self:setImage(image)
 end
 
 function Score:getDiceValues(dice)
@@ -149,11 +153,14 @@ function Score:scoreFullHouse()
 end
 
 function Score:crawlNumberAppearing(start, count)
-	-- log("crawl no. appearing: start = " .. start .. ", count = " .. count)
+	log("crawl no. appearing: start = " .. start .. ", count = " .. count)
 	local isStraight = true
 
+	-- account for 1-index
+	count -= 1
+
 	for i = start, start + count do
-		-- log(i .. " = " .. self.numberAppearing[i])
+		log(i .. " = " .. self.numberAppearing[i])
 		if self.numberAppearing[i] == 0 then
 			isStraight = false
 			break
@@ -188,10 +195,10 @@ function Score:scoreLargeStraight()
 		self:crawlNumberAppearing(1, 5) or
 		self:crawlNumberAppearing(2, 5)
 	) then
-		-- log("is large straight")
+		log("is large straight")
 		self.points = 40
 	else
-		-- log("is NOT large straight")
+		log("is NOT large straight")
 		self.points = 0
 	end
 

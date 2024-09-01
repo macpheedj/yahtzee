@@ -8,6 +8,12 @@ function Scoreboard:init()
 	self:add()
 end
 
+function Scoreboard:displayFinal()
+	local text = "*Final Score\n" .. SCORE .. "*"
+	local image = gfx.imageWithText(text, 72, 48, nil, nil, nil, kTextAlignment.center)
+	self:setImage(image)
+end
+
 function Scoreboard:displayStop()
 	local text = "*A or B\nto STOP*"
 	local image = gfx.imageWithText(text, 72, 48, nil, nil, nil, kTextAlignment.center)

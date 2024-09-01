@@ -10,6 +10,7 @@ import "score"
 import "scoreboard"
 
 DEBUG = true
+GAME = nil
 
 local gfx <const> = playdate.graphics
 
@@ -26,7 +27,7 @@ end
 function gameStart()
 	math.randomseed(playdate.getSecondsSinceEpoch())
 
-	Game()
+	GAME = Game()
 end
 
 function playdate.update()
@@ -43,7 +44,14 @@ function playdate.keyPressed(key)
 
 	if key == "8" then return end
 	if key == "9" then return end
-	if key == "0" then return end
+	if key == "0" then
+		if GAME == nil then return end
+		GAME.dice[1]:cheatValue(1)
+		GAME.dice[2]:cheatValue(2)
+		GAME.dice[3]:cheatValue(3)
+		GAME.dice[4]:cheatValue(4)
+		GAME.dice[5]:cheatValue(5)
+	end
 end
 
 gameStart()
