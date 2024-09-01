@@ -98,9 +98,11 @@ function Score:getMatchCount()
 end
 
 function Score:sumValues()
+	-- log("[Score] summing values")
 	local total = 0
 
 	for _, value in ipairs(self.values) do
+		-- log("[Score] value", value)
 		total += value
 	end
 
@@ -250,10 +252,6 @@ end
 
 function Score:getScoreValue(dice)
 	self:getDiceValues(dice)
-
-	if self.points > 0 then
-		return self.points
-	end
 
 	if self.index <= 6 then return self:scoreTopRow()
 	elseif self.index == 7 then return self:scoreNOfAKind(3)
