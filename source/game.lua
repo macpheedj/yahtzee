@@ -1,3 +1,4 @@
+ROLL = 0
 SCORE = 0
 SUBTOTAL = 0
 BONUS_ELIGIBLE = false
@@ -10,8 +11,6 @@ class("Game").extends(gfx.sprite)
 function Game:init()
 	self.dice = {}
 	self.scores = {}
-	self.roll = 1
-	self.round = 1
 	self.crankChange = 0
 
 	self.states = {
@@ -32,6 +31,14 @@ function Game:setState(state)
 	self.state = state
 	self:deselectAll()
 
+	if self.state == self.states.STANDBY then
+		self.scoreboard:startToggling()
+	end
+
+	if self.state == self.states.ROLLING then
+		self.scoreboard:displayStop()
+	end
+
 	if self.state == self.states.SELECTING then
 		self.dice[1]:setSelected(true)
 	end
@@ -39,19 +46,19 @@ end
 
 function Game:reset()
 	-- log("[Game] reset")
+	ROLL = 0
 	SCORE = 0
 	SUBTOTAL = 0
 	BONUS_ELIGIBLE = false
 
 	self.dice = {}
 	self.scores = {}
-	self.roll = 1
 	self.round = 1
 	self.crankChange = 0
 	self.state = self.states.STANDBY
 
 	self.scoreboard = Scoreboard()
-	self.scoreboard:displayRoll(self.roll)
+	self.scoreboard:displayRoll()
 
 	self:setupDice()
 	self:setupScores()
@@ -250,11 +257,17 @@ function Game:rollDice()
 	end
 end
 
+function Game:startNewRound()
+	self:setState(self.states.STANDBY)
+	ROLL = 0
+end
+
 function Game:stopNextDie(index)
 	log("[Game] stopping die", index)
 	if index > #self.dice then
 		pd.timer.performAfterDelay(200, function()
-			self.roll += 1
+			ROLL += 1
+			self.scoreboard:displayRoll()
 			self:setState(self.states.SELECTING)
 		end)
 	else
@@ -306,7 +319,7 @@ function Game:handleSelectionInput()
 		end
 	else
 		self.dice[index]:setSelected(true)
-		self.scoreboard:displayRoll(self.roll)
+		self.scoreboard:displayRoll()
 	end
 end
 
@@ -318,6 +331,7 @@ function Game:handleSelectionConfirmation()
 			self.scores[index]:getScoreValue(self.dice)
 			self.scores[index]:confirmSelection()
 			self.scoreboard:displayScore()
+			self:startNewRound()
 		end
 	else
 		self.dice[index]:confirmSelection()
@@ -346,7 +360,7 @@ function Game:update()
 		end
 	end
 
-	if self.state ~= self.states.ROLLING and self.roll <= 3 then
+	if self.state ~= self.states.ROLLING and ROLL < 3 then
 		local change = pd.getCrankChange()
 		self.crankChange += change
 
