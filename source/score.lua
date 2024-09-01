@@ -145,8 +145,10 @@ end
 
 function Score:scoreTopRow()
 	log("[Score] scoring top row: ")
+	self.points = 0
 
 	for _, value in ipairs(self.values) do
+		-- log(self.index, value)
 		if self.index == value then
 			self.points += value
 		end

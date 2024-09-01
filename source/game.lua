@@ -365,7 +365,6 @@ function Game:handleSelectionConfirmation()
 
 	if self.selectionRow < 3 then
 		if not self.scores[index].isDisabled then
-			-- self.scores[index]:getScoreValue(self.dice)
 			self.scores[index]:confirmSelection()
 			self.scoreboard:displayScore()
 			self:startNewRound()
