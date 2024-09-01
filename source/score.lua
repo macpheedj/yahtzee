@@ -56,6 +56,7 @@ function Score:setSelected(isSelected)
 end
 
 function Score:confirmSelection()
+	log("[Score] confirming selection", self.index)
 	self.isDisabled = true
 	SCORE += self.points
 

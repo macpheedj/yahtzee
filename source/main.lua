@@ -24,10 +24,33 @@ function loop(index, length)
 	return index < 1 and length or index > length and 1 or index
 end
 
+function makeMenu()
+	local menu = playdate.getSystemMenu()
+
+	menu:addMenuItem("score: 0", function () end)
+	menu:addMenuItem("subtotal: 0", function () end)
+	menu:addMenuItem("new game", function()
+		if GAME == nil then return end
+		GAME:reset()
+	end)
+end
+
 function gameStart()
 	math.randomseed(playdate.getSecondsSinceEpoch())
 
 	GAME = Game()
+	makeMenu()
+end
+
+function playdate.gameWillPause()
+	local menu = playdate.getSystemMenu()
+	local items = menu:getMenuItems()
+
+	for _, item in ipairs(items) do
+		local title = item:getTitle()
+		if string.sub(title, 1, 5) == "score" then item:setTitle("score: " .. SCORE) end
+		if string.sub(title, 1, 8) == "subtotal" then item:setTitle("subtotal: " .. SUBTOTAL) end
+	end
 end
 
 function playdate.update()

@@ -54,16 +54,25 @@ end
 
 function Game:reset()
 	-- log("[Game] reset")
+	gfx.clear()
+
 	ROLL = 0
 	SCORE = 0
 	SUBTOTAL = 0
 	BONUS_ELIGIBLE = false
+
+	if #self.dice > 0 then for _, die in ipairs(self.dice) do die:remove() end end
+	if #self.scores > 0 then for _, score in ipairs(self.scores) do score:remove() end end
 
 	self.dice = {}
 	self.scores = {}
 	self.round = 1
 	self.crankChange = 0
 	self.state = self.states.STANDBY
+
+	if self.scoreboard ~= nil then
+		self.scoreboard:remove()
+	end
 
 	self.scoreboard = Scoreboard()
 	self.scoreboard:displayRoll()
@@ -356,8 +365,7 @@ function Game:handleSelectionConfirmation()
 
 	if self.selectionRow < 3 then
 		if not self.scores[index].isDisabled then
-			log("this one was not disabled")
-			self.scores[index]:getScoreValue(self.dice)
+			-- self.scores[index]:getScoreValue(self.dice)
 			self.scores[index]:confirmSelection()
 			self.scoreboard:displayScore()
 			self:startNewRound()
