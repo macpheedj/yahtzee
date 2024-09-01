@@ -397,10 +397,10 @@ function Game:update()
 	end
 
 	if self.state ~= self.states.ROLLING and ROLL < 3 then
-		local change = pd.getCrankChange()
+		local change, accel = pd.getCrankChange()
 		self.crankChange += change
 
-		if math.abs(self.crankChange) >= 360 then
+		if math.abs(accel) > 60 or math.abs(self.crankChange) >= 360 then
 			self:rollDice()
 		end
 	end
