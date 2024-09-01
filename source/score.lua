@@ -95,6 +95,7 @@ function Score:getDiceValues(dice)
 
 	-- reset numberAppearing
 	for i = 1, 6 do self.numberAppearing[i] = 0 end
+	self.isYahtzee = true
 
 	for i, die in ipairs(diceCopy) do
 		self.values[i] = die.value
@@ -270,8 +271,6 @@ end
 
 function Score:scoreYahtzee()
 	log("[Score] scoring yahtzee")
-	isDryRun = isDryRun or false
-
 	if self.isYahtzee then
 		self.points = 50
 	else

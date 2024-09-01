@@ -9,7 +9,7 @@ import "die"
 import "score"
 import "scoreboard"
 
-DEBUG = false
+DEBUG = true
 GAME = nil
 
 local gfx <const> = playdate.graphics
