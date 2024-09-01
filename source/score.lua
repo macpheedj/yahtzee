@@ -232,24 +232,6 @@ function Score:scoreYahtzee()
 	return self.points
 end
 
--- for hinting system, check if selection would result in a non-zero score
-function Score:checkEligibility(dice)
-	self:getDiceValues(dice)
-
-	if self.index <= 6 then return self:scoreTopRow() > 0
-	elseif self.index == 7 then return self:scoreNOfAKind(3) > 0
-	elseif self.index == 8 then return self:scoreNOfAKind(4) > 0
-	elseif self.index == 9 then return self:scoreFullHouse() > 0
-	elseif self.index == 10 then return self:scoreSmallStraight() > 0
-	elseif self.index == 11 then return self:scoreLargeStraight() > 0
-	elseif self.index == 12 then return self:scoreChance() > 0
-	elseif self.index == 13 then return self:scoreYahtzee() > 0
-	end
-
-	-- reset points, we're just looking here
-	self.points = 0
-end
-
 function Score:getScoreValue(dice)
 	self:getDiceValues(dice)
 
