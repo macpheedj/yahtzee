@@ -40,12 +40,18 @@ function playdate.update()
 end
 
 function playdate.keyPressed(key)
+	if GAME == nil then return end
 	if not DEBUG then return end
 
-	if key == "8" then return end
-	if key == "9" then return end
+	if key == "8" then GAME:printScores() end
+	if key == "9" then
+		GAME.dice[1]:cheatValue(6)
+		GAME.dice[2]:cheatValue(6)
+		GAME.dice[3]:cheatValue(6)
+		GAME.dice[4]:cheatValue(6)
+		GAME.dice[5]:cheatValue(6)
+	end
 	if key == "0" then
-		if GAME == nil then return end
 		GAME.dice[1]:cheatValue(1)
 		GAME.dice[2]:cheatValue(2)
 		GAME.dice[3]:cheatValue(3)

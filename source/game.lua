@@ -2,6 +2,7 @@ ROLL = 0
 SCORE = 0
 SUBTOTAL = 0
 BONUS_ELIGIBLE = false
+SUBTOTAL_CLAIMED = false
 
 local pd <const> = playdate
 local gfx <const> = playdate.graphics
@@ -308,6 +309,13 @@ function Game:stopRolling()
 	self:stopNextDie(1)
 end
 
+function Game:printScores()
+	log("[Game] printing scores")
+	for _, score in ipairs(self.scores) do
+		log("[Game] ", score.index, score.points)
+	end
+end
+
 function Game:deselectAll()
 	for _, die in ipairs(self.dice) do die:setSelected(false) end
 	for _, score in ipairs(self.scores) do score:setSelected(false) end
@@ -330,12 +338,13 @@ function Game:handleSelectionInput()
 	if self.selectionRow < 3 then
 		self.scores[index]:setSelected(true)
 
+		local previewValue, previewBonus = 0, 0
+
 		if not self.scores[index].isDisabled then
-			local previewValue = self.scores[index]:getScoreValue(self.dice)
-			self.scoreboard:previewScore(previewValue)
-		else
-			self.scoreboard:displayScore()
+			previewValue, previewBonus = self.scores[index]:getScoreValue(self.dice)
 		end
+
+		self.scoreboard:previewScore(previewValue + previewBonus)
 	else
 		self.dice[index]:setSelected(true)
 		self.scoreboard:displayRoll()

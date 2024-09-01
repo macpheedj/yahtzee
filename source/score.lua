@@ -59,6 +59,23 @@ function Score:confirmSelection()
 	self.isDisabled = true
 	SCORE += self.points
 
+	if self.index <= 6 then
+		SUBTOTAL += self.points
+
+		if SUBTOTAL >= 63 and not SUBTOTAL_CLAIMED then
+			SUBTOTAL_CLAIMED = true
+			SCORE += 35
+		end
+	end
+
+	if self.isYahtzee and BONUS_ELIGIBLE then
+		SCORE += 100
+	end
+
+	if self.index == 13 and self.isYahtzee then
+		BONUS_ELIGIBLE = true
+	end
+
 	local image = self.images:getImage(self.index)
 	image = image:fadedImage(0.5, gfx.image.kDitherTypeDiagonalLine)
 	self:setImage(image)
@@ -92,6 +109,22 @@ function Score:getDiceValues(dice)
 	return self.values
 end
 
+function Score:getBonusValue()
+	local bonus = 0
+
+	if self.index <= 6 then
+		if SUBTOTAL < 63 and SUBTOTAL + self.points >= 63 then
+			bonus += 35
+		end
+	end
+
+	if self.isYahtzee and BONUS_ELIGIBLE then
+		bonus += 100
+	end
+
+	return bonus
+end
+
 function Score:getMatchCount()
 	table.sort(self.numberAppearing)
 	return self.numberAppearing[#self.numberAppearing], self.numberAppearing[#self.numberAppearing - 1]
@@ -120,7 +153,7 @@ function Score:scoreTopRow()
 
 	log("[Score] score: ", self.points)
 	log("")
-	return self.points
+	return self.points, self:getBonusValue()
 end
 
 function Score:scoreNOfAKind(n)
@@ -135,11 +168,16 @@ function Score:scoreNOfAKind(n)
 
 	log("[Score] score: ", self.points)
 	log("")
-	return self.points
+	return self.points, self:getBonusValue()
 end
 
 function Score:scoreFullHouse()
 	log("[Score] scoring full house")
+	if self.isYahtzee and BONUS_ELIGIBLE then
+		self.points = 25
+		return self.points, self:getBonusValue()
+	end
+
 	local count1, count2 = self:getMatchCount()
 
 	if count1 == 3 and count2 == 2 then
@@ -151,7 +189,7 @@ function Score:scoreFullHouse()
 
 	log("[Score] score: ", self.points)
 	log("")
-	return self.points
+	return self.points, self:getBonusValue()
 end
 
 function Score:crawlNumberAppearing(start, count)
@@ -174,6 +212,11 @@ end
 
 function Score:scoreSmallStraight()
 	log("[Score] scoring small straight")
+	if self.isYahtzee and BONUS_ELIGIBLE then
+		self.points = 30
+		return self.points, self:getBonusValue()
+	end
+
 	if (
 		self:crawlNumberAppearing(1, 4) or
 		self:crawlNumberAppearing(2, 4) or
@@ -188,11 +231,16 @@ function Score:scoreSmallStraight()
 
 	log("[Score] score: ", self.points)
 	log("")
-	return self.points
+	return self.points, self:getBonusValue()
 end
 
 function Score:scoreLargeStraight()
 	log("[Score] scoring large straight")
+	if self.isYahtzee and BONUS_ELIGIBLE then
+		self.points = 40
+		return self.points, self:getBonusValue()
+	end
+
 	if (
 		self:crawlNumberAppearing(1, 5) or
 		self:crawlNumberAppearing(2, 5)
@@ -206,7 +254,7 @@ function Score:scoreLargeStraight()
 
 	log("[Score] score: ", self.points)
 	log("")
-	return self.points
+	return self.points, self:getBonusValue()
 end
 
 function Score:scoreChance()
@@ -214,7 +262,7 @@ function Score:scoreChance()
 	self.points = self:sumValues()
 	log("[Score] score: ", self.points)
 	log("")
-	return self.points
+	return self.points, self:getBonusValue()
 end
 
 function Score:scoreYahtzee()
@@ -229,7 +277,7 @@ function Score:scoreYahtzee()
 
 	log("[Score] score: ", self.points)
 	log("")
-	return self.points
+	return self.points, 0
 end
 
 function Score:getScoreValue(dice)

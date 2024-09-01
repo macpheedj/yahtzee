@@ -9,7 +9,7 @@ function Scoreboard:init()
 end
 
 function Scoreboard:displayFinal()
-	local text = "*Final Score\n" .. SCORE .. "*"
+	local text = "*Final\n" .. SCORE .. "*"
 	local image = gfx.imageWithText(text, 72, 48, nil, nil, nil, kTextAlignment.center)
 	self:setImage(image)
 end
